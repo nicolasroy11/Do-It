@@ -20,10 +20,8 @@ class TaskDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad();
-        
-//        
-//        TaskName.text = TaskEditingContext.name;
-//        IsImportant.isOn = TaskEditingContext.isImportant;
+        TaskName.text = TaskEditingContext.name;
+        IsImportant.isOn = TaskEditingContext.isImportant;
     }
 
     @IBAction func IsImportantToggled(_ sender: AnyObject) {
