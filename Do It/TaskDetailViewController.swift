@@ -10,9 +10,8 @@ import UIKit
 
 class TaskDetailViewController: UIViewController {
 
-    var TaskEditingContext = Task();
     var IsEditable = false;
-    var PreviousVC = TaskSearchViewController();
+    var TaskEditingContext: Task = Task(context: (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext);
     
     @IBOutlet weak var AddButtonLabel: UIButton!
     @IBOutlet weak var NameLabel: UILabel!
@@ -20,32 +19,22 @@ class TaskDetailViewController: UIViewController {
     @IBOutlet weak var IsImportant: UISwitch!
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-        print(TaskEditingContext.Description);
-        TaskName.text = TaskEditingContext.Name;
-        IsImportant.isOn = TaskEditingContext.IsImportant;
+        super.viewDidLoad();
         
+//        
+//        TaskName.text = TaskEditingContext.name;
+//        IsImportant.isOn = TaskEditingContext.isImportant;
     }
 
     @IBAction func IsImportantToggled(_ sender: AnyObject) {
-        TaskEditingContext.IsImportant = !TaskEditingContext.IsImportant;
+        TaskEditingContext.isImportant = IsImportant.isOn;
     }
     
     @IBAction func OnSave(_ sender: AnyObject) {
-        TaskEditingContext.Name = TaskName.text!;
-        if TaskEditingContext.Id == 0 {
-            TaskEditingContext.Id = PreviousVC.Tasks.count + 1;
-            PreviousVC.Tasks.append(TaskEditingContext);
-        }
-        else {
-            PreviousVC.Tasks[TaskEditingContext.Id - 1] = TaskEditingContext;
-        }
-        PreviousVC.TableView.reloadData();
+        let ts = TaskService();
+        TaskEditingContext.name = TaskName.text!;
+        ts.Save(task: TaskEditingContext);
         navigationController!.popViewController(animated: true);
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
     }
 
 }

@@ -13,17 +13,26 @@ class TaskSearchViewController: UIViewController, UITableViewDataSource, UITable
     @IBOutlet weak var TableView: UITableView!
     
     @IBAction func OnPlusTapped(_ sender: AnyObject) {
-        performSegue(withIdentifier: "MainToDetail", sender: Task());
+        performSegue(withIdentifier: "MainToDetail", sender: nil);
     }
     
     var Tasks: [Task] = [];
-    var SelectedRow: Any = {};
+    var SelectedRowId: Int = 0;
     
     override func viewDidLoad() {
         super.viewDidLoad()
         TableView.delegate = self;
         TableView.dataSource = self;
-        Tasks = MakeTasks();
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        GetTasks();
+        TableView.reloadData()
+    }
+    
+    func GetTasks() {
+        let ts = TaskService();
+        Tasks = ts.Get();
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -33,45 +42,24 @@ class TaskSearchViewController: UIViewController, UITableViewDataSource, UITable
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let i = indexPath.row;
         let cell = UITableViewCell();
-        cell.textLabel?.text = Tasks[i].IsImportant ? "❗️ \(Tasks[i].Name)" : Tasks[i].Name;
+        cell.textLabel?.text = Tasks[i].isImportant ? "❗️ \(Tasks[i].name!)" : Tasks[i].name!;
         return cell;
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        SelectedRow = Tasks[indexPath.row];
-        performSegue(withIdentifier: "MainToDetail", sender: SelectedRow);
+        // SelectedRowId = Int(Tasks[indexPath.row].objectID);
+        performSegue(withIdentifier: "MainToDetail", sender: nil);
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "MainToDetail" {
             let detailVC = segue.destination as! TaskDetailViewController;
-            detailVC.PreviousVC = self;
-            detailVC.TaskEditingContext = sender as! Task;
+            //detailVC.TaskId = sender as! Int;
         }
         else {
             let a = 9;
         }
-        
     }
-    
-    func MakeTasks() -> [Task] {
-        var tasks: [Task] = [];
-        for i in (0...4) {
-            let newRow = Task();
-            newRow.Id = i + 1;
-            newRow.Name = "Task \(i)";
-            newRow.Description = "Description for \(i)";
-            newRow.IsImportant = i % 2 > 0;
-            tasks.append(newRow);
-        }
-        return tasks;
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        
-    }
-    
     
 }
 
